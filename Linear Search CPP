@@ -1,0 +1,33 @@
+#include<iostream>
+using namespace std;
+
+void print(int array[], int n) {
+	for (int i = 0; i < n; i++) {
+		cout << array[i] << " ";
+	}
+	cout << endl;
+}
+
+int linearSearch(int array[], int n, int key) {
+	for (int i = 0; i < n; i++)
+	{
+		if (array[i] == key) {
+			cout << "Number found at index : "<<array[i];
+			return i;
+		}
+		
+	}
+	cout << "Not found" << endl;
+	return -1;
+}
+
+
+int main() {
+
+	int array[] = { 124,2,1,23,2 };
+	int n = sizeof(array) / sizeof(int);
+	linearSearch(array, n, 23);
+
+
+	return 0;
+}
