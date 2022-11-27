@@ -1,0 +1,210 @@
+ // Course Class//
+ #pragma once
+#include"Student.h"
+
+class Course {
+private:
+
+	int courseId;
+	string courseName;
+	int capacity;
+	int currentlyEnrolled;
+	Student* students;
+
+public:
+
+	Course();
+	Course(int ,string,int);
+	int getCourseId();
+	void setCourseId(int);
+	string getCourseName();
+	void setCourseName(string);
+	int getCapacity();
+	void setCapacity(int);
+
+	// functions
+
+	void enroll(int, string);
+	void resize();
+	void drop(int);
+	void shift(int);
+	int search(int);
+	void print();
+};
+
+// students class
+
+#pragma once
+#include<string>
+#include<iostream>
+using namespace std;
+
+class Student {
+
+private:
+	int id;
+	string name;
+
+public:
+	Student();
+	Student(int,string);
+	int getId();
+	void setId(int);
+	string getName();
+	void setName(string);
+};
+
+// Implementation
+
+#include"Course.h"
+#include<iostream>
+#include<string>
+using namespace std;
+
+//// student class
+
+Student::Student() {
+	id = 0;
+	name = "";
+}
+
+Student::Student(int id, string name) {
+	this->id =id;
+	this->name = name;
+}
+
+int Student::getId() {
+	return id;
+}
+
+void Student::setId(int id) {
+	this->id = id;
+}
+
+void Student::setName(string name) {
+	this->name = name;
+}
+string Student::getName() {
+	return name;
+}
+
+/**********   course class **********/
+
+Course::Course() {
+	courseId = -1;
+	courseName = "";
+	capacity = 10;
+	currentlyEnrolled = 0;
+	students = new Student[capacity];
+}
+
+Course::Course(int id,string name,int capacity) {
+	courseId = id;
+	courseName = name;
+	capacity = capacity;
+	currentlyEnrolled = 0;
+	students = new Student[capacity];
+}
+
+
+void Course::enroll(int id, string name) {
+	
+	if (currentlyEnrolled == capacity) {
+		resize();
+		students[currentlyEnrolled].setId(id);
+		students[currentlyEnrolled].setName(name);
+		currentlyEnrolled++;
+	}
+	else {
+		students[currentlyEnrolled].setId(id);
+		students[currentlyEnrolled].setName(name);
+		currentlyEnrolled++;
+	}
+
+}
+
+void Course::resize() {
+
+	capacity += 5;
+	Student* newStudents = new Student[capacity];
+	for (int i = 0; i < currentlyEnrolled; i++) {
+		newStudents->setId(students->getId());
+		newStudents->setName(students->getName());
+	}
+	delete []  students;
+	students = newStudents;
+
+}
+
+int Course::search(int id) {
+
+	for (int i = 0; i < currentlyEnrolled; i++) {
+
+		if (students[i].getId() == id) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+void Course::drop(int id) {
+
+	int index = search(id);
+	if (index == -1) {
+		cout << " not found " << endl;
+
+	}
+	else {
+		students[index].setId(-1);
+		students[index].setName("");
+		shift(index);
+		currentlyEnrolled--;
+	}
+
+}
+
+void Course::shift(int index) {
+	for (int i = index; i < currentlyEnrolled; i++) {
+		students[i].setId(students[i + 1].getId());
+		students[i].setName(students[i + 1].getName());
+	}
+	students[currentlyEnrolled].setId(-1);
+	students[currentlyEnrolled].setName("");
+	
+}
+
+void Course::print() {
+	for (int i = 0; i < currentlyEnrolled; i++) {
+		
+		cout << students[i].getId() << " " << endl;;
+		cout << students[i].getName() << " " << endl;
+	}
+
+}
+
+// Main
+
+#include"Course.h"
+#include<iostream>
+#include<string>
+using namespace std;
+
+int main() {
+
+	Course c;
+	c.enroll(123, "MOON");
+	c.enroll(123, "MOON");
+	c.enroll(123, "MOON");
+	c.enroll(123, "MOON");
+	c.print();
+	return 0;
+}
+
+
+
+
+
+
+
+
+
