@@ -1,0 +1,246 @@
+// node.h header
+#pragma once
+
+class node {
+
+private:
+	int data;
+	node* next;
+
+public:
+
+	node();
+	node(int);
+	void setData(int);
+	int getData();
+	void setNext(node*);
+	node* getNext();
+
+};
+
+// list.h header
+
+#pragma once
+#include"node.h"
+
+class list {
+
+private:
+	node* head;
+	node* tail;
+
+public:
+	list();
+	void insertatHead(int);
+	void insertatTail(int);
+	void insertatTarget(int,int);
+	void insertatTargetNext(int,int);
+	void print();
+	bool isEmpty();
+	node* search(int);
+	void remove(int);
+};
+
+//nodeImp
+
+#include<iostream>
+#include"list.h"
+using namespace std;
+
+node::node() {
+	data = 0;
+	next = NULL;
+}
+
+node::node(int data) {
+	this->data = data;
+	this->next = NULL;
+}
+
+void node::setData(int data) {
+	this->data = data;
+}
+int node::getData() {
+	return data;
+}
+
+void node::setNext(node* next) {
+	this->next = next;
+}
+node* node::getNext() {
+	return next;
+}
+
+// listImp
+#include<iostream>
+#include"list.h"
+using namespace std;
+
+list::list() {
+	head = NULL;
+	tail = NULL;
+}
+
+bool list:: isEmpty() {
+	if (head == NULL) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void list::insertatTail(int data) {
+	if (isEmpty()) {
+		node* temp = new node(data);
+		head = temp;
+		tail = temp;
+	}
+	else {
+		node* temp = new node(data);
+		tail->setNext(temp);
+		tail = temp;
+	}
+}
+
+
+void list::insertatHead(int data) {
+	
+	if (isEmpty()) {
+		insertatTail(data);
+	}
+	else {
+		node* temp = new node(data);
+		temp->setNext(head);
+		head = temp;
+	}
+
+}
+
+node* list::search(int toFind) {
+
+	node* temp = head;
+	if (isEmpty()) {
+		cout << " List is empty" << endl;
+	
+	}
+
+	else if (temp->getData() == toFind) {
+		return temp;
+	}
+	else {
+		temp = temp->getNext();
+	}
+
+	return temp;
+
+}
+
+void list::insertatTarget(int data, int toInsert) {
+
+	node* target = search(toInsert);
+	if (target == NULL) {
+		cout << "target not found" << endl;
+	}
+	else {
+		if (target == tail) {
+			insertatTail(data);
+		}
+		else
+		{
+			node* temp = new node(data);
+			temp->setNext(target->getNext());
+			target->setNext(temp);
+		}
+
+	}
+
+}
+
+void list::print() {
+	if (isEmpty()) {
+		cout << "List is empty" << endl;
+	}
+	else {
+
+		node* temp = head;
+		while (temp != NULL) {
+			cout << temp->getData() << " ";
+			temp = temp->getNext();
+		}
+		cout << endl;
+	}
+
+}
+
+void list::remove(int toRemove) {
+
+	node* target = head;
+	node* prev = NULL;
+
+	while (target != NULL) {
+		if (target->getData() == toRemove) {
+			break;
+		}
+		else {
+			prev = target;
+			target = target->getNext();
+		}
+	}  // end of loop
+
+	if (target == NULL) {
+		cout << " value not found" << endl;
+		return;
+	}
+	else{
+		if (target == head) {
+			head = head->getNext();
+			target->setNext(NULL);
+			delete target;
+	}
+		else if (target == tail) {
+			tail = prev;
+			tail->setNext(NULL);
+			delete target;
+		}
+		else {
+			prev->setNext(target->getNext());
+			target->setData(NULL);
+			delete target;
+		}
+	}
+}
+
+// drive code
+#include<iostream>
+#include"list.h"
+using namespace std;
+
+int main() {
+
+	list l1;
+	cout << " Insertion at head" << endl;
+	l1.insertatHead(1);
+	l1.insertatHead(2);
+	l1.insertatHead(3);
+	l1.print();
+	cout << " inserting at tail" << endl;
+	l1.insertatTail(4);
+	l1.insertatTail(5);
+	l1.insertatTail(6);
+	l1.print();
+	cout << "  insertion in between" << endl;
+	l1.insertatTarget(10, 5);
+	l1.print();
+	cout << " Removing" << endl;
+	l1.remove(3);
+	l1.print();
+	cout << " removing in between " << endl;
+	l1.remove(1);
+	l1.print();
+	cout << " Removing from tail" << endl;
+	l1.remove(6);
+	l1.print();
+
+	return 0;
+}
