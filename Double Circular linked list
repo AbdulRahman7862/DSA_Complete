@@ -1,0 +1,267 @@
+// node.h
+
+class Node{
+private:
+	int data;
+	Node *next;
+	Node *prev;
+public:
+	Node();
+	Node(int);
+
+	int getData();
+	void setData(int);
+	Node* getNext();
+	void setNext(Node*);
+	Node* getPrev();
+	void setPrev(Node*);
+};
+
+// list.h
+#pragma once
+#include"Node.h"
+class List{
+private:
+	Node *head;
+	Node *tail;
+public:
+	List();
+	//Functions..................
+	bool isEmpty();
+	void insert_At_Head(int);
+	void insert_At_Tail(int);
+	void insert_At_Target(int, int);
+	void remove(int);
+	Node* search(int); 
+	void print();
+};
+
+// implementation
+#pragma once
+#include"List.h"
+#include<iostream>
+using namespace std;
+///....................NODE CLASS......................
+
+Node::Node()
+{
+	data = -1;
+	next = NULL;
+}
+Node::Node(int data)
+{
+	this->data = data;
+	this->next = NULL;
+	this->prev = NULL;
+}
+int Node::getData()
+{
+	return data;
+}
+void Node::setData(int data)
+{
+	this->data = data;
+}
+Node* Node::getNext()
+{
+	return next;
+}
+void Node::setNext(Node *next)
+{
+	this->next = next;
+}
+Node* Node::getPrev()
+{
+	return prev;
+}
+void Node::setPrev(Node *prev)
+{
+	this->prev = prev;
+}
+
+
+///....................LIST CLASS......................
+List::List()
+{
+	head = NULL;
+	tail = NULL;
+}
+bool List::isEmpty()
+{
+	if (head == NULL)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+void List::insert_At_Tail(int data)
+{
+	if (isEmpty())
+	{
+		Node *temp = new Node(data);
+		temp->setNext(head);
+		temp->setPrev(tail);
+		head = temp;
+		tail = temp;
+	}
+	else
+	{
+		Node *temp = new Node(data);
+		temp->setPrev(tail);
+		temp->setNext(head);
+		tail->setNext(temp);
+		head->setPrev(temp);
+		tail = temp;
+	}
+}
+void List::insert_At_Head(int data)
+{
+	if (isEmpty())
+	{
+		insert_At_Tail(data);
+	}
+	else
+	{
+		Node *temp = new Node(data);
+		temp->setNext(head);
+		temp->setPrev(tail);
+		head->setPrev(temp);
+		tail->setNext(temp);
+		head = temp;
+	}
+}
+void List::print()
+{
+	if (isEmpty())
+	{
+		cout << "EMPTY" << endl;
+	}
+	else
+	{
+	Node *temp = head;
+	do 
+	{
+		cout << temp->getData()<<endl;
+		temp = temp->getNext();
+	}
+	while(temp != head);
+	cout<<"Your head is: "<<temp->getData()<<endl;
+}
+	
+}
+Node* List::search(int value)
+{
+	Node *temp = head;
+	do
+	{
+		if (temp->getData() == value)
+		{
+			return temp;
+		}
+		temp = temp->getNext();
+	}while (temp != head);
+	return NULL;
+}
+void List::insert_At_Target(int toFind, int data)
+{
+	Node *target = search(toFind);
+	if (target == NULL)
+	{
+		cout << "Not found" << endl;
+		return;
+	}
+	if (target == tail)
+	{
+		insert_At_Tail(data);
+	}
+	else{
+		Node *newNode = new Node(data);
+		Node *nextNode = target->getNext();
+		newNode->setNext(nextNode);
+		newNode->setPrev(target);
+		target->setNext(newNode);
+		nextNode->setPrev(newNode);
+
+	}
+}
+void List::remove(int toRemove)
+{
+	Node *prev = NULL;
+	Node *target = head;
+	while (target != NULL)
+	{
+		if (target->getData() == toRemove)
+		{
+			break;
+		}
+		else{
+			prev = target;
+			target = target->getNext();
+		}
+	}
+	//............End of Loop................
+	if (target == NULL)
+	{
+		cout << "Not found" << endl;
+		return;
+	}
+	else{
+		if (target == head)
+		{
+			Node *nextNode = target->getNext();
+			nextNode->setPrev(tail);
+			tail->setNext(nextNode);
+			target->setNext(NULL);
+			target->setPrev(NULL);
+			head = nextNode;
+			delete target;
+		}
+		else if (target == tail)
+		{
+			Node *prevNode = target->getPrev();
+			prevNode->setNext(head);
+			head->setPrev(prevNode);
+			tail->setPrev(NULL);
+			tail->setNext(NULL);
+			tail = prevNode;			
+			delete target;
+		}
+		else
+		{
+			Node *nextNode = target->getNext();
+			Node *prevNode = target->getPrev();
+			target->setNext(NULL);
+			target->setPrev(NULL);
+			delete target;
+			nextNode->setPrev(prevNode);
+			prevNode->setNext(nextNode);
+		}
+	}
+}
+
+// drive code
+
+
+#include<iostream>
+#include<conio.h>
+#include "List.h"
+#include"implimentation.cpp"
+using namespace std;
+int main()
+{
+	List list1;
+	list1.insert_At_Tail(0);
+	list1.insert_At_Tail(1);
+	list1.insert_At_Tail(2);
+	list1.insert_At_Tail(3);
+	list1.insert_At_Tail(4);
+	list1.insert_At_Tail(5);
+	list1.insert_At_Head(-1);
+	list1.remove(5);
+	list1.print();
+	getch();
+	return 0;
+}
