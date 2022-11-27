@@ -1,0 +1,303 @@
+// Dnode.h header
+#pragma once
+class node {
+
+private:
+	int data;
+	node* next;
+	node* prev; 
+public:
+	node();
+	node(int);
+	void setNext(node*);
+	node* getNext();
+	void setPrev(node*);
+	node* getPrev();
+	void setData(int);
+	int getData();
+};
+
+// Dlist.h
+
+#pragma once
+#include"Dnode.h"
+
+class list {
+
+private:
+
+	node* head;
+	node* tail;
+
+public:
+
+	list();
+	void insertatHead(int);
+	void insertatTail(int);
+	void insertatTarget(int,int);
+	void printForward();
+	void printBackward();
+	bool isEmpty();
+	void remove(int);
+	node* search(int);
+	void setHead(node*);
+	node* getHead();
+	void setTail(node*);
+	node* getTail();
+};
+
+// DlistImp
+#include<iostream>
+#include"Dlist.h"
+using namespace std;
+
+list::list() {
+	head = NULL;
+	tail = NULL;
+}
+
+bool list::isEmpty() {
+
+	if (head == NULL) {
+		return true;
+	}
+
+	else {
+		return false;
+	}
+
+}
+void list::insertatTail(int data) {
+
+	if (isEmpty()) {
+		node* temp = new node(data);
+		head = tail = temp;  // check if it will work or not
+	}
+	else {
+
+		node* temp = new node(data);
+		tail->setNext(temp);
+		temp->setPrev(tail);
+		tail = temp;
+	}
+	
+
+}
+
+
+void list::insertatHead(int data) {
+	if (isEmpty()) {
+		insertatTail(data);
+	}
+	else {
+		node* temp = new node(data);
+		temp->setNext(head);
+		head->setPrev(temp);
+		head = temp;
+	}
+
+}
+
+node* list::search(int toFind) {
+
+	node* temp = head;
+	while (temp != NULL) {
+		if (temp->getData() == toFind) {
+			return temp;
+		}
+		else {
+
+			temp = temp->getNext();  // check it later 
+		}
+
+	}// end of loop
+
+	return temp;
+
+}
+
+
+void list::insertatTarget(int toInsert, int target) {
+	
+	node* temp = search(target);  // name should be different from paramterized variables name
+
+	if (target == NULL) {
+		cout << "target not found" << endl;
+	}
+	else {
+
+		if (temp == head) {
+
+			insertatHead(toInsert);
+		}
+		else if (temp == tail) {
+			insertatTail(toInsert);
+		}
+		else {
+
+			node* newnode = new node(toInsert);
+			newnode->setNext(temp->getNext());
+			newnode->getNext()->setPrev(newnode);
+			temp->setNext(newnode);
+			newnode->setPrev(temp);
+		}
+	}
+
+}
+
+
+void list::printForward() {
+	
+	node* temp = head;
+	while (temp != NULL) {
+		cout << temp->getData() << " ";
+		temp = temp->getNext();
+	}
+	cout << endl;
+}
+
+void list::printBackward() {
+	node* temp = tail;
+	while (temp != NULL) {
+		cout << temp->getData() << " ";
+		temp = temp->getPrev();
+	}
+	cout << endl;
+}
+
+// removing
+
+void list::remove(int toRemove) {
+	if (isEmpty()) {
+		cout << " list is empty" << endl;
+		return;
+	}
+	else {
+
+		node* target = search(toRemove);
+		node* prev = NULL;  
+		if (target == NULL) {
+			cout << " Target not found" << endl;
+		}
+		else if (target == head) {
+			prev = head;
+			head = head->getNext();
+			prev->setNext(NULL);
+			head->setPrev(NULL);
+			delete prev;   // prev is basically the target 
+		}
+		else if (target == tail) {
+			tail->setNext(NULL);
+			prev = tail;
+			tail = tail->getPrev();
+			prev->setPrev(NULL);
+			delete prev;  // again prev is just for targeting 
+		}
+		else {
+			target->getPrev()->setNext(target->getNext());
+			target->getNext()->setPrev(target->getPrev());
+			delete target;
+
+		}
+
+	}
+
+}
+// DNode Imp
+#include<iostream>
+#include"Dlist.h"
+using namespace std;
+
+
+node::node() {
+	data = 0;
+	next = NULL;
+	prev = NULL;
+}
+node::node(int data) {
+	this->data = data;
+	this->next = NULL;
+	this->prev = NULL;
+}
+
+void node::setData(int data) {
+
+	this->data = data;
+}
+
+int node::getData() {
+	return data;
+}
+
+void node::setNext(node* next) {
+	this->next = next;
+}
+
+node* node::getNext() {
+	return next;
+}
+
+void node::setPrev(node* prev) {
+	this->prev = prev;
+}
+node* node::getPrev() {
+	return prev;
+}
+//Drive code
+
+#include<iostream>
+#include"Dlist.h"
+using namespace std;
+
+int main() {
+
+	list l1;
+	cout << " Inserting at head" << endl;
+	l1.insertatHead(1);
+	l1.insertatHead(2);
+	l1.insertatHead(3);
+	cout << " Printing forward " << endl;
+	l1.printForward();
+	cout << " printing backward " << endl;
+	l1.printBackward();
+	cout << "Inserting at tail" << endl;
+	l1.insertatTail(4);
+	l1.insertatTail(5);
+	l1.insertatTail(6);
+	cout << "Printing forward" << endl;
+	l1.printForward();
+	cout << " Printing backward " << endl;
+	l1.printBackward();
+	cout << " Inserting at position " << endl;
+	l1.insertatTarget(100, 6);
+	cout << "Printing forward" << endl;
+	l1.printForward();
+	cout << " Printing backward " << endl;
+	l1.printBackward();
+	cout << " removing from head" << endl;
+	l1.remove(3);
+	cout << " Printing forward " << endl;
+	l1.printForward();
+	cout << " Printing backforward " << endl;
+	l1.printBackward();
+
+
+	cout << " removing from tail" << endl;
+	l1.remove(6);
+	cout << " Printing forward " << endl;
+	l1.printForward();
+	cout << " Printing backforward " << endl;
+	l1.printBackward();
+
+
+
+	cout << " removing from in between" << endl;
+	l1.remove(4);
+	cout << " Printing forward " << endl;
+	l1.printForward();
+	cout << " Printing backforward " << endl;
+	l1.printBackward();
+
+
+	return 0;
+}
