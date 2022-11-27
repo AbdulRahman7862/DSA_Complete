@@ -1,0 +1,257 @@
+// node.h header
+#pragma once
+class node {
+private:
+
+	int data;
+	node* next;
+
+public:
+	node();
+	node(int);
+	int getData();
+	void setData(int);
+	node* getNext();
+	void setNext(node*);
+};
+
+// list.h header
+
+#pragma once
+#include"node.h"
+
+class list {
+
+private:
+	node* head;
+	node* tail;
+
+public:
+
+	list();
+	void insertAtHead(int);
+	void insertAtTail(int);
+	void insertAtTarget(int, int);
+	node* search(int);
+	void print();
+	void remove(int);
+	bool isEmpty();
+};
+
+// node Implementation
+#include<iostream>
+#include"list.h"
+using namespace std;
+
+node::node() {
+	data = -1;
+	next = NULL;
+}
+
+node::node(int data) {
+	this->data = data;
+	this->next = NULL;
+}
+
+void node::setData(int data) {
+	this->data = data;
+}
+
+int node::getData() {
+	return data;
+}
+
+void node::setNext(node* next) {
+	this->next = next;
+}
+
+node* node::getNext() {
+	return next;
+}
+
+// list IMp
+
+#include<iostream>
+#include"list.h"
+using namespace std;
+
+list::list() {
+	head = NULL;
+	tail = NULL;
+}
+
+bool list::isEmpty() {
+	if (head == NULL) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void list::insertAtTail(int data) {
+
+	if (isEmpty()) {
+
+		node* temp = new node(data);
+		temp->setNext(head); // making it circular
+		head = tail = temp;
+	}
+	else {
+		node* temp = new node(data);
+		temp->setNext(head);
+		tail->setNext(temp);
+		tail = temp;
+	}
+
+}
+
+void list::insertAtHead(int data) {
+	if (isEmpty()) {
+		insertAtTail(data);
+	}
+	else {
+		node* temp = new node(data);
+		temp->setNext(head);
+		tail->setNext(temp); // added this check if error
+		head = temp;
+	}
+}
+
+node* list::search(int toFind) {
+	
+	node* temp = head;
+	do {
+		if (temp->getData() == toFind) {
+			return temp;
+		}
+		else {
+			temp = temp->getNext();
+		}
+	} while (temp != head);
+	return NULL;
+}
+
+void list::insertAtTarget(int position, int toInsert) {
+
+	node* target = search(position);
+	if (isEmpty()) {
+		cout << " List is empty" << endl;
+		return;
+	}
+	else {
+		if (target == NULL) {
+			cout << " Target not found " << endl;
+			return;
+		}
+		else if (target == tail) {
+			insertAtTail(toInsert);
+		}
+		else {
+			node* temp = new node(toInsert);
+			temp->setNext(target->getNext());
+			target->setNext(temp);
+		}
+	}
+}
+
+void list::remove(int toRemove) {
+	
+	node* current = head;
+	node* previous = NULL;
+
+	while (current != NULL) {
+		if (current->getData() == toRemove) {
+			break;
+		}
+		else {
+			previous = current;
+			current = current->getNext();
+		}
+	} // end of loop
+
+	if (current == NULL) {
+		cout << " Target not found " << endl;
+		return;
+	}
+	else {
+
+		if (current == head) {
+			previous = head;
+			current = current->getNext();
+			head = current;
+			previous->setNext(NULL);
+			delete previous;
+			tail->setNext(head); // updating head bcz old head is shfited and that node is deleted now
+		}
+		else if(current == tail) {
+			current = tail;
+			tail = previous;
+			tail->setNext(NULL);
+			delete current;
+			tail->setNext(head);
+		}
+		else {
+			previous->setNext(current->getNext());
+			current->setNext(NULL);
+			delete current;
+		}
+	}
+}
+
+void list::print() {
+	if (isEmpty()) {
+		cout << " List is empty" << endl;
+	}
+	else {
+		node* temp = head;
+		do {
+			cout << temp->getData() << " ";
+			temp = temp->getNext();
+		} while (temp != head);
+		cout << endl;
+		cout << " Head is: " << temp->getData() << endl;
+	}
+}
+
+// 
+
+// drive code
+#include<iostream>
+#include"list.h"
+using namespace std;
+
+
+int main() {
+
+	list l1;
+	cout << " Inserting at tail " << endl;
+	l1.insertAtTail(1);
+	l1.insertAtTail(2);
+	l1.insertAtTail(3);
+	l1.insertAtTail(4);
+	l1.print();
+	
+	cout << " Inserting at head " << endl;
+	l1.insertAtHead(5);
+	l1.insertAtHead(6);
+	l1.insertAtHead(7);
+	l1.print();
+
+	cout << " Inserting at target " << endl;
+	l1.insertAtTarget(7, 100);
+	l1.print();
+
+	cout << " Deleting " << endl;
+	l1.remove(7);
+	l1.print();
+
+	cout << " deleting from head " << endl;
+	l1.remove(100);
+	l1.print();
+
+	cout << " Deleting from middle " << endl;
+	l1.remove(3);
+	l1.print();
+	return 0;
+}
